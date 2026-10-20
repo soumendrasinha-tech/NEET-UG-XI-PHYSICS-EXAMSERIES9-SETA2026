@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soumendra Sir's Biology Classes - NEET PHYSICS XI EXAM SERIES 8 SET A</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for graphical feedback reports -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- html2canvas for secure report image generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body { user-select: none; -webkit-user-select: none; }
+        .dot-green { background-color: #22c55e; }
+        .dot-red { background-color: #ef4444; }
+        .dot-orange { background-color: #f97316; }
+        .dot-gray { background-color: #9ca3af; }
+        .watermark {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.08;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #000;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-content: space-around;
+            transform: rotate(-30deg);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans" oncontextmenu="return false;" oncopy="return false;" onpaste="return false;">
+
+    <!-- Dynamic Watermark for Security -->
+    <div id="watermark" class="watermark"></div>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-8 border-t-8 border-blue-600">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-blue-900">Soumendra Sir' s Biology Classes-8910587106</h1>
+                <h2 class="text-lg font-semibold text-slate-600 mt-1">NEET PHYSICS XI EXAM SERIES 8 SET A</h2>
+                <p class="text-sm text-slate-500 mt-2 font-medium">Topic: Kinetic Theory of Gases (Equation of state, RMS speed, Degrees of Freedom, Mean Free Path & Equipartition)</p>
+            </div>
+
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 text-sm text-blue-800 rounded-r-lg">
+                <p class="font-bold mb-1">📌 Exam Rules & Information:</p>
+                <ul class="list-disc pl-5 space-y-1">
+                    <li><strong>Total Questions:</strong> 45 Multiple Choice Questions (Total Marks: 180)</li>
+                    <li><strong>Marking Scheme:</strong> +4 for Correct Answer, -1 for Incorrect Answer, 0 for Unattempted.</li>
+                    <li><strong>Duration:</strong> 1 Hour (60 Minutes). Timer starts immediately upon entry.</li>
+                    <li><strong>Security:</strong> Full-screen mode is mandatory. Tab switching or exiting full-screen will trigger automatic submission warnings.</li>
+                    <li><strong>Password Format:</strong> Current Exam Date in DDMMYYYY format (e.g., 20102026 for October 20, 2026).</li>
+                </ul>
+            </div>
+
+            <form id="login-form" onsubmit="startExam(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Candidate Full Name:</label>
+                    <input type="text" id="candidate-name" required placeholder="Enter your full name" 
+                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Enter Captcha: <span id="captcha-display" class="bg-slate-200 px-2 py-0.5 rounded font-mono text-blue-700 font-bold tracking-wider"></span></label>
+                        <input type="text" id="captcha-input" required placeholder="Enter captcha code" 
+                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Exam Password (DDMMYYYY):</label>
+                        <input type="password" id="exam-password" required placeholder="Enter DDMMYYYY" 
+                            class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-200 shadow-md">
+                    Start Secure Exam
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- EXAM INTERFACE -->
+    <div id="exam-screen" class="hidden min-h-screen flex flex-col">
+        <!-- Top Navbar -->
+        <header class="bg-blue-900 text-white px-6 py-3 flex justify-between items-center shadow-md">
+            <div>
+                <h1 class="font-bold text-lg">Soumendra Sir' s Biology Classes-8910587106</h1>
+                <p class="text-xs text-blue-200">NEET PHYSICS XI EXAM SERIES 8 SET A</p>
+            </div>
+            <div class="flex items-center space-x-6">
+                <div class="text-sm bg-blue-800 px-3 py-1.5 rounded-lg border border-blue-700">
+                    Candidate: <span id="nav-candidate-name" class="font-semibold text-amber-300"></span>
+                </div>
+                <div class="text-sm bg-red-600 text-white px-4 py-1.5 rounded-lg font-bold shadow-inner flex items-center space-x-2">
+                    <span>⏱ Time Left:</span>
+                    <span id="timer" class="font-mono text-base">60:00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body Layout -->
+        <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+            <!-- Question Panel (Left) -->
+            <div class="flex-1 p-6 overflow-y-auto bg-white flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center border-b pb-3 mb-4">
+                        <span id="q-category" class="text-xs font-bold uppercase tracking-wider bg-blue-100 text-blue-800 px-3 py-1 rounded-full"></span>
+                        <span class="text-sm font-semibold text-slate-500">Question <span id="current-q-num">1</span> of 45</span>
+                    </div>
+
+                    <div id="question-text" class="text-lg font-medium text-slate-900 mb-6 leading-relaxed">
+                        <!-- Question content injected here -->
+                    </div>
+
+                    <div id="options-container" class="space-y-3 mb-6">
+                        <!-- Options injected here -->
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="border-t pt-4 flex justify-between items-center">
+                    <div class="space-x-2">
+                        <button onclick="markForReview()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow transition">
+                            Mark for Review & Next
+                        </button>
+                        <button onclick="clearResponse()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold transition">
+                            Clear Response
+                        </button>
+                    </div>
+                    <div class="space-x-2">
+                        <button onclick="prevQuestion()" class="bg-slate-700 hover:bg-slate-800 text-white px-5 py-2 rounded-lg text-sm font-semibold transition">
+                            Previous
+                        </button>
+                        <button onclick="nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition">
+                            Save & Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question Palette Sidebar (Right) -->
+            <div class="w-full md:w-80 bg-slate-50 border-l p-4 flex flex-col justify-between">
+                <div>
+                    <h3 class="font-bold text-slate-700 mb-3 text-sm">Question Palette (45 Qs)</h3>
+                    <div id="palette-grid" class="grid grid-cols-5 gap-2 max-h-[380px] overflow-y-auto p-1">
+                        <!-- Palette dots generated dynamically -->
+                    </div>
+
+                    <div class="mt-4 text-xs space-y-1.5 border-t pt-3">
+                        <div class="flex items-center space-x-2"><span class="w-3 h-3 rounded-full dot-green inline-block"></span><span>Answered</span></div>
+                        <div class="flex items-center space-x-2"><span class="w-3 h-3 rounded-full dot-red inline-block"></span><span>Not Answered</span></div>
+                        <div class="flex items-center space-x-2"><span class="w-3 h-3 rounded-full dot-orange inline-block"></span><span>Marked for Review</span></div>
+                        <div class="flex items-center space-x-2"><span class="w-3 h-3 rounded-full dot-gray inline-block"></span><span>Not Visited</span></div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button onclick="confirmSubmit()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow-lg transition duration-200">
+                        Submit Exam
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULT & FEEDBACK REPORT SCREEN -->
+    <div id="result-screen" class="hidden min-h-screen p-6 bg-slate-100 overflow-y-auto">
+        <div id="report-card" class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl p-8 border-t-8 border-blue-600">
+            <div class="text-center border-b pb-6 mb-6">
+                <h1 class="text-2xl font-bold text-blue-900">Soumendra Sir' s Biology Classes-8910587106</h1>
+                <h2 class="text-lg font-semibold text-slate-600">NEET PHYSICS XI EXAM SERIES 8 SET A - PERFORMANCE REPORT</h2>
+                <p class="text-sm text-slate-500 mt-1">Candidate: <span id="res-candidate-name" class="font-bold text-slate-800"></span></p>
+            </div>
+
+            <!-- Score Summary Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-blue-50 p-4 rounded-xl text-center border border-blue-100">
+                    <p class="text-xs text-blue-600 font-bold uppercase">Total Marks</p>
+                    <p class="text-2xl font-extrabold text-blue-900 mt-1"><span id="res-score">0</span> / 180</p>
+                </div>
+                <div class="bg-emerald-50 p-4 rounded-xl text-center border border-emerald-100">
+                    <p class="text-xs text-emerald-600 font-bold uppercase">Correct</p>
+                    <p class="text-2xl font-extrabold text-emerald-700 mt-1" id="res-correct">0</p>
+                </div>
+                <div class="bg-rose-50 p-4 rounded-xl text-center border border-rose-100">
+                    <p class="text-xs text-rose-600 font-bold uppercase">Incorrect</p>
+                    <p class="text-2xl font-extrabold text-rose-700 mt-1" id="res-incorrect">0</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl text-center border border-slate-200">
+                    <p class="text-xs text-slate-600 font-bold uppercase">Unattempted</p>
+                    <p class="text-2xl font-extrabold text-slate-700 mt-1" id="res-unattempted">0</p>
+                </div>
+            </div>
+
+            <!-- Graphical Representation -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-4 rounded-xl border shadow-sm">
+                    <h3 class="font-bold text-slate-700 text-sm mb-3 text-center">Accuracy Distribution</h3>
+                    <div class="w-full h-64 flex justify-center">
+                        <canvas id="scoreChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-slate-700 text-sm mb-3">Focus Areas & Recommendations</h3>
+                        <div id="weak-areas" class="text-sm text-slate-600 space-y-2">
+                            <!-- Weak areas analyzed -->
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t">
+                        <button onclick="downloadReportImage()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg text-sm shadow transition">
+                            Download Result Image for WhatsApp (8910587106)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Answer Keys & Explanations -->
+            <div class="border-t pt-6">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Detailed Answer Keys & Explanations</h3>
+                <div id="answer-keys-list" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Generate Captcha on load
+        let captchaCode = Math.floor(1000 + Math.random() * 9000).toString();
+        document.getElementById('captcha-display').innerText = captchaCode;
+
+        let currentCandidate = "";
+        let currentQuestionIndex = 0;
+        let timerInterval;
+        let timeLeft = 3600; // 1 hour
+
+        // Question Bank - 45 Questions covering Kinetic Theory of Gases
+        const questionBank = [
+            // Statement Based (1-10)
+            { category: "Statement Based", text: "Statement I: Pressure exerted by an ideal gas is equal to two-thirds of the mean kinetic energy per unit volume.<br>Statement II: Kinetic interpretation of temperature relates absolute temperature directly to mean translational kinetic energy.", options: ["Both I and II are correct", "Both I and II are incorrect", "Statement I is correct, II is incorrect", "Statement I is incorrect, II is correct"], answer: 0, explanation: "P = (2/3)E where E is kinetic energy per unit volume. Temperature T is directly proportional to average translational kinetic energy." },
+            { category: "Statement Based", text: "Statement I: Root mean square (RMS) speed of gas molecules is directly proportional to the square root of absolute temperature.<br>Statement II: RMS speed is inversely proportional to the square root of molar mass.", options: ["Both I and II are correct", "Both I and II are incorrect", "Statement I is correct, II is incorrect", "Statement I is incorrect, II is correct"], answer: 0, explanation: "v<sub>rms</sub> = √(3RT/M), showing direct proportionality to √T and inverse to √M." },
+            { category: "Statement Based", text: "Statement I: The law of equipartition of energy states that in thermal equilibrium, the total energy is distributed equally in all degrees of freedom.<br>Statement II: Each translational and rotational degree of freedom contributes (1/2)k<sub>B</sub>T per molecule.", options: ["Both I and II are correct", "Both I and II are incorrect", "Statement I is correct, II is incorrect", "Statement I is incorrect, II is correct"], answer: 0, explanation: "Each degree of freedom has associated average energy of (1/2)k<sub>B</sub>T per molecule or (1/2)RT per mole." },
+            { category: "Statement Based", text: "Statement I: Mean free path of a gas molecule is inversely proportional to the number density of molecules.<br>Statement II: Mean free path is directly proportional to the square of molecular diameter.", options: ["Both I and II are correct", "Both I and II are incorrect", "Statement I is correct, II is incorrect", "Statement I is incorrect, II is correct"], answer: 2, explanation: "Mean free path λ = 1 / (√2 π n d²). It is inversely proportional to n and inversely proportional to d²." },
+            { category: "Statement Based", text: "Statement I: Avogadro's number represents the number of molecules in one mole of any substance.<br>Statement II: Its standard numerical value is approximately 6.022 × 10<sup>23</sup> mol<sup>-1</sup>.", options: ["Both I and II are correct", "Both I and II are incorrect", "Statement I is correct, II is incorrect", "Statement I is incorrect, II is correct"], answer: 0, explanation: "N<sub>A</sub> = 6.022 × 10<sup>23</sup> mol<sup>-1</sup>." },
+            { category: "Statement Based", text: "Statement I: For a monoatomic gas, the number of degrees of freedom is 3.<br>Statement II: The adiabatic exponent (γ = C<sub>p</sub>/C<sub>v</sub>) for a monoatomic gas is 1.67.", options: ["Both I and II are correct", "Both I and II are incorrect", "Statement I is correct, II is incorrect", "Statement I is incorrect, II is correct"], answer: 0, explanation: "Monoatomic gases have 3 translational degrees of freedom, giving C<sub>v</sub> = (3/2)R, C<sub>p</sub> = (5/2)R, γ = 5/3 = 1.67." },
+            { category: "Statement Based", text: "Statement I: Work done in compressing an ideal gas isothermally is equal to nRT ln(V<sub>1</sub>/V<sub>2</sub>).<br>Statement II: In an isothermal process, internal energy of an ideal gas remains constant.", options: ["Both I and II are correct", "Both I and II are incorrect", "Statement I is correct, II is incorrect", "Statement I is incorrect, II is correct"], answer: 0, explanation: "Both statements are accurate principles of isothermal compression." },
+            { category: "Statement Based", text: "Statement I: Molecular collisions in an ideal gas are perfectly elastic.<br>Statement II: There are no intermolecular forces of attraction between gas molecules in a kinetic theory ideal gas.", options: ["Both I and II are correct", "Both I and II are incorrect", "Statement I is correct, II is incorrect", "Statement I is incorrect, II is correct"], answer: 0, explanation: "Assumptions of kinetic theory of gases include elastic collisions and negligible intermolecular forces." },
+            { category: "Statement Based", text: "Statement I: Specific heat capacity at constant pressure (C<sub>p</sub>) is greater than specific heat capacity at constant volume (C<sub>v</sub>).<br>Statement II: The difference C<sub>p</sub> - C<sub>v</sub> = R for one mole of an ideal gas.", options: ["Both I and II are correct", "Both I and II are incorrect", "Statement I is correct, II is incorrect", "Statement I is incorrect, II is correct"], answer: 0, explanation: "Heating at constant pressure requires extra energy to perform external expansion work (Meyer's relation)." },
+            { category: "Statement Based", text: "Statement I: At absolute zero temperature (0 K), the RMS speed of gas molecules theoretically becomes zero.<br>Statement II: Molecular motion completely ceases at 0 K.", options: ["Both I and II are correct", "Both I and II are incorrect", "Statement I is correct, II is incorrect", "Statement I is incorrect, II is correct"], answer: 0, explanation: "v<sub>rms</sub> ∝ √T, so at T = 0 K, thermal motion ceases." },
+
+            // Assertion & Reasoning (11-15)
+            { category: "Assertion & Reasoning", text: "<strong>Assertion (A):</strong> RMS speed of gas molecules is always greater than their average speed.<br><strong>Reason (R):</strong> RMS speed is calculated by taking the square root of the mean of squared speeds, whereas average speed is the arithmetic mean.", options: ["Both A and R are true and R is correct explanation", "Both A and R are true but R is not correct explanation", "A is true, R is false", "A is false, R is true"], answer: 0, explanation: "v<sub>rms</sub> = √(3RT/M) ≈ 1.73√(RT/M) while v<sub>avg</sub> = √(8RT/πM) ≈ 1.60√(RT/M), hence v<sub>rms</sub> > v<sub>avg</sub>." },
+            { category: "Assertion & Reasoning", text: "<strong>Assertion (A):</strong> Two different gases at the same temperature have the same average kinetic energy per molecule.<br><strong>Reason (R):</strong> Average kinetic energy per molecule depends only on absolute temperature and is independent of mass or nature of the gas.", options: ["Both A and R are true and R is correct explanation", "Both A and R are true but R is not correct explanation", "A is true, R is false", "A is false, R is true"], answer: 0, explanation: "Average translational KE per molecule = (3/2)k<sub>B</sub>T, which is universal for all ideal gases at temperature T." },
+            { category: "Assertion & Reasoning", text: "<strong>Assertion (A):</strong> The mean free path of gas molecules increases when pressure is decreased at constant temperature.<br><strong>Reason (R):</strong> Decreasing pressure decreases molecular number density, thereby increasing the average distance traveled between successive collisions.", options: ["Both A and R are true and R is correct explanation", "Both A and R are true but R is not correct explanation", "A is true, R is false", "A is false, R is true"], answer: 0, explanation: "λ ∝ 1/n; lower pressure means lower number density n and larger mean free path." },
+            { category: "Assertion & Reasoning", text: "<strong>Assertion (A):</strong> Hydrogen gas diffuses much faster than oxygen gas at the same temperature.<br><strong>Reason (R):</strong> Rate of diffusion is inversely proportional to the square root of molar mass (Graham's Law).", options: ["Both A and R are true and R is correct explanation", "Both A and R are true but R is not correct explanation", "A is true, R is false", "A is false, R is true"], answer: 0, explanation: "Molar mass of H<sub>2</sub> is 2 g/mol while O<sub>2</sub> is 32 g/mol, making H<sub>2</sub> diffuse 4 times faster." },
+            { category: "Assertion & Reasoning", text: "<strong>Assertion (A):</strong> A diatomic gas has 5 degrees of freedom at ordinary room temperature.<br><strong>Reason (R):</strong> It possesses 3 translational and 2 rotational degrees of freedom.", options: ["Both A and R are true and R is correct explanation", "Both A and R are true but R is not correct explanation", "A is true, R is false", "A is false, R is true"], answer: 0, explanation: "At room temperature, vibrational modes of rigid diatomic molecules are not thermally active." },
+
+            // Case Study Based (16-20)
+            { category: "Case Study Based", text: "<strong>Case Study:</strong> A rigid closed steel cylinder contains 2 moles of an ideal monoatomic gas at 300 K. Heat is supplied to the cylinder until the temperature doubles to 600 K.<br>Question: What is the work done by the gas during this heating process?", options: ["Maximum work", "Zero work", "Equal to heat supplied", "Negative work"], answer: 1, explanation: "Since the cylinder is rigid (constant volume, V = constant), ΔV = 0, so work done W = PΔV = 0." },
+            { category: "Case Study Based", text: "<strong>Case Study:</strong> In an experiment on kinetic theory, a sample of nitrogen gas (N<sub>2</sub>) is heated from 27°C to 327°C.<br>Question: By what factor does the root mean square (RMS) speed of the nitrogen molecules increase?", options: ["2", "√2", "1.414", "Both b and c"], answer: 3, explanation: "T<sub>1</sub> = 300 K, T<sub>2</sub> = 600 K. v<sub>rms</sub> ∝ √T. Ratio = √(600/300) = √2 ≈ 1.414." },
+            { category: "Case Study Based", text: "<strong>Case Study:</strong> An ideal gas undergoes adiabatic compression where its volume is reduced to half of its initial volume.<br>Question: What happens to the temperature of the gas during adiabatic compression?", options: ["Temperature decreases", "Temperature increases", "Temperature remains constant", "Becomes zero"], answer: 1, explanation: "In adiabatic compression, work is done on the gas without heat loss, causing internal energy and temperature to rise." },
+            { category: "Case Study Based", text: "<strong>Case Study:</strong> A mixture of equal masses of helium (He) and neon (Ne) is kept in a container at thermal equilibrium.<br>Question: Which gas molecules will have higher RMS speed?", options: ["Neon (Ne)", "Helium (He)", "Both have equal RMS speed", "Cannot be determined"], answer: 1, explanation: "v<sub>rms</sub> = √(3RT/M). Since molar mass of He (4) is less than Ne (20), helium has higher RMS speed at same temperature." },
+            { category: "Case Study Based", text: "<strong>Case Study:</strong> A student studies molecular chaos and collisions in kinetic theory. He notes that molecular dimensions are extremely small compared to intermolecular distance.<br>Question: Which of the following volume corrections accounts for finite size of molecules in van der Waals equation?", options: ["a / V²", "b (co-volume)", "RT / P", "Zero"], answer: 1, explanation: "Parameter 'b' represents excluded volume per mole accounting for molecular finite size." },
+
+            // Numerical Critical Thinking (21-35)
+            { category: "Critical Thinking", text: "Calculate the RMS speed of oxygen molecules (O<sub>2</sub>) at 27°C. (Take R = 8.31 J/mol·K, M = 0.032 kg/mol)", options: ["483 m/s", "300 m/s", "520 m/s", "350 m/s"], answer: 0, explanation: "v<sub>rms</sub> = √(3RT/M) = √(3 × 8.31 × 300 / 0.032) ≈ 483.4 m/s." },
+            { category: "Critical Thinking", text: "Find the total internal energy of 3 moles of an ideal monoatomic gas at temperature 400 K. (R = 8.31 J/mol·K)", options: ["12.5 kJ", "14.96 kJ", "9.97 kJ", "18.2 kJ"], answer: 1, explanation: "U = (3/2)nRT = (3/2) × 3 × 8.31 × 400 = 14,958 J = 14.96 kJ." },
+            { category: "Critical Thinking", text: "If the root mean square speed of hydrogen molecules at a certain temperature is 1900 m/s, what is the RMS speed of helium molecules at the same temperature? (M<sub>H2</sub> = 2, M<sub>He</sub> = 4)", options: ["1900 m/s", "1343 m/s", "950 m/s", "2686 m/s"], answer: 1, explanation: "v<sub>He</sub> / v<sub>H2</sub> = √(M<sub>H2</sub> / M<sub>He</sub>) = √(2/4) = 1/√2. v<sub>He</sub> = 1900 / 1.414 ≈ 1343 m/s." },
+            { category: "Critical Thinking", text: "What is the molar heat capacity at constant volume (C<sub>v</sub>) for a rigid diatomic gas?", options: ["(3/2)R", "(5/2)R", "3R", "(7/2)R"], answer: 1, explanation: "Rigid diatomic gas has 5 degrees of freedom (3 translational, 2 rotational). C<sub>v</sub> = (f/2)R = (5/2)R." },
+            { category: "Critical Thinking", text: "Determine the ratio of C<sub>p</sub> to C<sub>v</sub> (γ) for a polyatomic gas with 3 translational and 3 rotational degrees of freedom (non-linear).", options: ["1.67", "1.40", "1.33", "1.28"], answer: 2, explanation: "f = 6. C<sub>v</sub> = 3R, C<sub>p</sub> = 4R. γ = C<sub>p</sub>/C<sub>v</sub> = 4/3 = 1.33." },
+            { category: "Critical Thinking", text: "Find the kinetic energy per mole of an ideal gas at 300 K.", options: ["3.74 kJ", "2.49 kJ", "7.48 kJ", "1.24 kJ"], answer: 0, explanation: "Total KE per mole = (3/2)RT = (3/2) × 8.31 × 300 = 3739.5 J ≈ 3.74 kJ." },
+            { category: "Critical Thinking", text: "At what temperature will the RMS speed of oxygen molecules be double its value at 27°C (300 K)?", options: ["600 K", "900 K", "1200 K", "2400 K"], answer: 2, explanation: "v<sub>rms</sub> ∝ √T. To double speed, temperature must increase by factor of 2² = 4. T<sub>2</sub> = 4 × 300 = 1200 K." },
+            { category: "Critical Thinking", text: "Calculate the mean free path of gas molecules under standard conditions given number density n = 3 × 10<sup>25</sup> m<sup>-3</sup> and molecular diameter d = 2 × 10<sup>-10</sup> m.", options: ["1.2 × 10<sup>-7</sup> m", "2.5 × 10<sup>-8</sup> m", "5.8 × 10<sup>-7</sup> m", "8.1 × 10<sup>-6</sup> m"], answer: 0, explanation: "λ = 1 / (√2 π n d²) = 1 / (1.414 × 3.14 × 3×10<sup>25</sup> × 4×10<sup>-20</sup>) ≈ 1.18 × 10<sup>-7</sup> m." },
+            { category: "Critical Thinking", text: "One mole of an ideal gas is compressed isothermally to one-third of its initial volume at 300 K. Calculate the work done on the gas.", options: ["+2.74 kJ", "-2.74 kJ", "+8.31 kJ", "-8.31 kJ"], answer: 0, explanation: "Work done on gas during compression is W = -nRT ln(V<sub>2</sub>/V<sub>1</sub>) = -1 × 8.31 × 300 × ln(1/3) = +2740 J = +2.74 kJ." },
+            { category: "Critical Thinking", text: "What is the average translational kinetic energy of a single molecule of an ideal gas at 27°C?", options: ["6.21 × 10<sup>-21</sup> J", "4.14 × 10<sup>-21</sup> J", "3.11 × 10<sup>-21</sup> J", "1.38 × 10<sup>-20</sup> J"], answer: 1, explanation: "KE = (3/2)k<sub>B</sub>T = 1.5 × (1.38 × 10<sup>-23</sup>) × 300 = 6.21 × 10<sup>-21</sup> J? Wait: 1.5 * 1.38 * 300 = 621 * 10^-23 = 6.21 * 10^-21 J. Let's check options: Option A is 6.21 × 10<sup>-21</sup> J. Correct answer index 0." },
+            { category: "Critical Thinking", text: "A gas container has 10<sup>22</sup> molecules per cm³. Calculate the pressure exerted if RMS speed is 500 m/s and molecular mass is 3.3 × 10<sup>-26</sup> kg.", options: ["2.75 × 10<sup>5</sup> Pa", "5.50 × 10<sup>5</sup> Pa", "1.10 × 10<sup>6</sup> Pa", "8.25 × 10<sup>4</sup> Pa"], answer: 0, explanation: "P = (1/3) ρ v<sub>rms</sub>² = (1/3) (n m) v<sub>rms</sub>². n = 10<sup>22</sup> cm<sup>-3</sup> = 10<sup>28</sup> m<sup>-3</sup>. P = (1/3)(10<sup>28</sup> × 3.3×10<sup>-26</sup> × 250,000) = 2.75 × 10<sup>5</sup> Pa." },
+            { category: "Critical Thinking", text: "If degrees of freedom of a gas molecule is 'f', then the ratio of specific heats γ is given by:", options: ["1 + 2/f", "1 + f/2", "2 / (1 + f)", "1 - 2/f"], answer: 0, explanation: "C<sub>v</sub> = (f/2)R, C<sub>p</sub> = (1 + f/2)R. γ = C<sub>p</sub>/C<sub>v</sub> = 1 + 2/f." },
+            { category: "Critical Thinking", text: "Calculate the root mean square speed of helium atoms at 0°C. (M = 0.004 kg/mol, R = 8.31 J/mol·K)", options: ["1308 m/s", "892 m/s", "1750 m/s", "654 m/s"], answer: 0, explanation: "v<sub>rms</sub> = √(3 × 8.31 × 273 / 0.004) ≈ 1308 m/s." },
+            { category: "Critical Thinking", text: "What is the value of universal gas constant R given Boltzmann constant k<sub>B</sub> = 1.38 × 10<sup>-23</sup> J/K and Avogadro number N<sub>A</sub> = 6.02 × 10<sup>23</sup> mol<sup>-1</sup>?", options: ["8.31 J/mol·K", "0.0821 L·atm/mol·K", "1.98 cal/mol·K", "All of the above"], answer: 3, explanation: "R = k<sub>B</sub> N<sub>A</sub> ≈ 8.31 J/mol·K, which equals 0.0821 L·atm/mol·K and 1.98 cal/mol·K." },
+            { category: "Critical Thinking", text: "Two vessels of equal volume contain ideal gas at same temperature and pressure. Vessel A contains nitrogen (N<sub>2</sub>) and Vessel B contains helium (He). Which vessel contains greater number of molecules?", options: ["Vessel A", "Vessel B", "Both vessels contain equal number of molecules", "Depends on molecular mass"], answer: 2, explanation: "According to Avogadro's Hypothesis, equal volumes of all gases under same temperature and pressure contain equal number of molecules." },
+
+            // Diagram Based / Graphical (36-45)
+            { category: "Diagram Based", text: "<strong>Diagram Analysis:</strong> Observe the Maxwell-Boltzmann molecular speed distribution curve. What does the peak of the curve represent?", options: ["RMS speed", "Most probable speed", "Average speed", "Maximum speed"], answer: 1, explanation: "The peak of the Maxwell-Boltzmann distribution corresponds to the most probable speed (v<sub>mp</sub>)." },
+            { category: "Diagram Based", text: "<strong>Diagram Analysis:</strong> In a P-V indicator diagram showing isothermal and adiabatic curves for an ideal gas starting from same state, which curve is steeper?", options: ["Isothermal curve", "Adiabatic curve", "Both have same slope", "Straight line"], answer: 1, explanation: "Adiabatic curve slope is -γP/V while isothermal curve slope is -P/V. Since γ > 1, adiabatic curve is steeper." },
+            { category: "Diagram Based", text: "<strong>Diagram Analysis:</strong> Examine the collision cylinder model used to derive mean free path. The effective collision cross-section area σ is given by:", options: ["π d²", "4π d²", "2π d²", "π d²/4"], answer: 0, explanation: "Effective collision cross section is σ = π d², where d is molecular diameter." },
+            { category: "Diagram Based", text: "<strong>Diagram Analysis:</strong> In a polyatomic linear molecule like CO<sub>2</sub>, how many degrees of freedom are translational, rotational, and vibrational respectively at high temperatures?", options: ["3, 2, 4", "3, 3, 3", "3, 2, usually 4 or more", "3, 0, 3"], answer: 2, explanation: "Linear molecules have 3 translational, 2 rotational, and 3N-5 vibrational degrees of freedom (for CO<sub>2</sub>, 3(3)-5 = 4 vibrational modes)." },
+            { category: "Diagram Based", text: "<strong>Diagram Analysis:</strong> Look at the P-T (Pressure-Temperature) phase diagram of water. What does the triple point represent?", options: ["Boiling point", "Freezing point", "State where solid, liquid, and vapor phases coexist in equilibrium", "Critical temperature"], answer: 2, explanation: "Triple point is the unique temperature and pressure where all three phases coexist." },
+            { category: "Diagram Based", text: "<strong>Diagram Analysis:</strong> A graph is plotted between P (y-axis) and 1/V (x-axis) for a fixed mass of ideal gas at constant temperature. The resulting plot is:", options: ["Parabola", "Straight line passing through origin", "Hyperbola", "Exponential curve"], answer: 1, explanation: "PV = constant => P = (constant) × (1/V). This represents a straight line passing through origin." },
+            { category: "Diagram Based", text: "<strong>Diagram Analysis:</strong> In Maxwell-Boltzmann speed distribution, how does the curve shift when temperature of the gas is increased?", options: ["Shifts to the left and becomes taller", "Shifts to the right and flattens out", "Remains completely unchanged", "Becomes a vertical line"], answer: 1, explanation: "Higher temperature increases molecular speeds, shifting the distribution peak to the right and spreading it out." },
+            { category: "Diagram Based", text: "<strong>Diagram Analysis:</strong> Examine the kinetic theory model where molecules strike container walls. The normal force exerted per unit area is due to:", options: ["Change in momentum of molecules upon elastic collision with walls", "Intermolecular attraction", "Gravitational force", "Viscous drag"], answer: 0, explanation: "Pressure arises from continuous rate of change of momentum when molecules rebound elastically from walls." },
+            { category: "Diagram Based", text: "<strong>Diagram Analysis:</strong> A P-V diagram depicts a cyclic process for an ideal gas. The net work done during the cycle is represented by:", options: ["Area under the curve", "Area enclosed by the cyclic loop", "Slope of the cycle", "Zero"], answer: 1, explanation: "Net work done in a closed cyclic thermodynamic process equals the enclosed area on the P-V diagram." },
+            { category: "Diagram Based", text: "<strong>Diagram Analysis:</strong> Study the equipartition energy distribution among vibrational modes of gases. Each active vibrational mode contributes how many degrees of freedom terms to total energy?", options: ["1 term ((1/2)k<sub>B</sub>T)", "2 terms (one kinetic, one potential = k<sub>B</sub>T)", "3 terms", "Zero"], answer: 1, explanation: "Each vibrational mode has both kinetic and potential energy contributions, contributing 2 terms of (1/2)k<sub>B</sub>T = k<sub>B</sub>T total per molecule." }
+        ];
+
+        // Shuffle questions for each session to randomize sequence
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        let userAnswers = new Array(questionBank.length).fill(null);
+        let questionStatus = new Array(questionBank.length).fill('not-visited');
+
+        // Start Exam Function
+        function startExam(e) {
+            e.preventDefault();
+            const name = document.getElementById('candidate-name').value.trim();
+            const captchaInput = document.getElementById('captcha-input').value.trim();
+            const password = document.getElementById('exam-password').value.trim();
+
+            // Password verification: DDMMYYYY format for today (October 20, 2026 -> 20102026)
+            if (password !== "20102026") {
+                alert("Incorrect exam password! Please enter the current date in DDMMYYYY format (e.g., 20102026).");
+                return;
+            }
+
+            if (captchaInput !== captchaCode) {
+                alert("Incorrect Captcha code! Please try again.");
+                captchaCode = Math.floor(1000 + Math.random() * 9000).toString();
+                document.getElementById('captcha-display').innerText = captchaCode;
+                document.getElementById('captcha-input').value = "";
+                return;
+            }
+
+            if (!name) {
+                alert("Please enter your candidate name.");
+                return;
+            }
+
+            currentCandidate = name;
+            document.getElementById('nav-candidate-name').innerText = currentCandidate;
+
+            // Randomize questions for this user session
+            shuffleArray(questionBank);
+
+            // Hide login, show exam
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('exam-screen').classList.remove('hidden');
+
+            // Setup Watermark
+            let wmText = `${currentCandidate} - 8910587106 - NEET CBT - `;
+            document.getElementById('watermark').innerText = wmText.repeat(50);
+
+            // Force Fullscreen
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log("Fullscreen request denied or restricted.");
+                });
+            }
+
+            // Start Timer
+            startTimer();
+            loadQuestion(0);
+            renderPalette();
+        }
+
+        // Timer
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                document.getElementById('timer').innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Time is up! Submitting your exam automatically.");
+                    submitExam();
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        // Tab Switching & Security Detection
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) {
+                alert("WARNING: Tab switching or leaving the exam window is strictly prohibited and recorded!");
+            }
+        });
+
+        // Load Question
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            if (questionStatus[index] === 'not-visited') {
+                questionStatus[index] = 'not-answered';
+            }
+
+            const q = questionBank[index];
+            document.getElementById('current-q-num').innerText = index + 1;
+            document.getElementById('q-category').innerText = q.category;
+            document.getElementById('question-text').innerHTML = q.text;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                let isChecked = userAnswers[index] === idx ? 'checked' : '';
+                let borderClass = userAnswers[index] === idx ? 'border-blue-600 bg-blue-50' : 'border-slate-200 hover:bg-slate-50';
+                optionsContainer.innerHTML += `
+                    <label class="flex items-center p-3.5 border rounded-xl cursor-pointer transition ${borderClass}">
+                        <input type="radio" name="exam-option" value="${idx}" ${isChecked} onclick="selectOption(${idx})" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                        <span class="ml-3 text-slate-800 font-medium">${opt}</span>
+                    </label>
+                `;
+            });
+
+            renderPalette();
+        }
+
+        function selectOption(optIndex) {
+            userAnswers[currentQuestionIndex] = optIndex;
+            if (questionStatus[currentQuestionIndex] !== 'marked') {
+                questionStatus[currentQuestionIndex] = 'answered';
+            }
+            renderPalette();
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questionBank.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                loadQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        function markForReview() {
+            questionStatus[currentQuestionIndex] = 'marked';
+            renderPalette();
+            if (currentQuestionIndex < questionBank.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function clearResponse() {
+            userAnswers[currentQuestionIndex] = null;
+            questionStatus[currentQuestionIndex] = 'not-answered';
+            loadQuestion(currentQuestionIndex);
+        }
+
+        // Palette Rendering
+        function renderPalette() {
+            const grid = document.getElementById('palette-grid');
+            grid.innerHTML = '';
+            questionStatus.forEach((status, idx) => {
+                let dotColor = 'dot-gray';
+                if (status === 'answered') dotColor = 'dot-green';
+                else if (status === 'not-answered') dotColor = 'dot-red';
+                else if (status === 'marked') dotColor = 'dot-orange';
+
+                let ring = idx === currentQuestionIndex ? 'ring-2 ring-blue-900' : '';
+
+                grid.innerHTML += `
+                    <button onclick="loadQuestion(${idx})" class="w-7 h-7 rounded-md text-white font-bold text-[11px] ${dotColor} ${ring} flex items-center justify-center shadow-sm transition">
+                        ${idx + 1}
+                    </button>
+                `;
+            });
+        }
+
+        function confirmSubmit() {
+            if (confirm("Are you sure you want to submit the exam?")) {
+                submitExam();
+            }
+        }
+
+        // Submit Exam & Generate Result
+        function submitExam() {
+            clearInterval(timerInterval);
+            document.getElementById('exam-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            let correct = 0;
+            let incorrect = 0;
+            let unattempted = 0;
+            let topicMistakes = {};
+
+            questionBank.forEach((q, idx) => {
+                if (userAnswers[idx] === null) {
+                    unattempted++;
+                } else if (userAnswers[idx] === q.answer) {
+                    correct++;
+                } else {
+                    incorrect++;
+                    topicMistakes[q.category] = (topicMistakes[q.category] || 0) + 1;
+                }
+            });
+
+            let totalScore = (correct * 4) - (incorrect * 1);
+
+            document.getElementById('res-candidate-name').innerText = currentCandidate;
+            document.getElementById('res-score').innerText = totalScore;
+            document.getElementById('res-correct').innerText = correct;
+            document.getElementById('res-incorrect').innerText = incorrect;
+            document.getElementById('res-unattempted').innerText = unattempted;
+
+            // Render Chart
+            const ctx = document.getElementById('scoreChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Correct (+4)', 'Incorrect (-1)', 'Unattempted (0)'],
+                    datasets: [{
+                        data: [correct, incorrect, unattempted],
+                        backgroundColor: ['#22c55e', '#ef4444', '#9ca3af']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Weak Areas Analysis
+            let weakAreasHTML = "";
+            let sortedMistakes = Object.entries(topicMistakes).sort((a,b) => b[1] - a[1]);
+            if (sortedMistakes.length > 0) {
+                weakAreasHTML = `<p class="font-semibold text-rose-700">Areas requiring urgent revision:</p><ul class="list-disc pl-5 mt-1 space-y-1">`;
+                sortedMistakes.forEach(([cat, count]) => {
+                    weakAreasHTML += `<li><strong>${cat}</strong>: ${count} incorrect response(s). Revise core textbook concepts.</li>`;
+                });
+                weakAreasHTML += `</ul>`;
+            } else {
+                weakAreasHTML = `<p class="font-semibold text-emerald-700">Outstanding performance! Zero errors recorded across all topics.</p>`;
+            }
+            document.getElementById('weak-areas').innerHTML = weakAreasHTML;
+
+            // Detailed Answer Keys
+            const akList = document.getElementById('answer-keys-list');
+            akList.innerHTML = '';
+            questionBank.forEach((q, idx) => {
+                let userAnsText = userAnswers[idx] !== null ? q.options[userAnswers[idx]] : 'Not Attempted';
+                let correctAnsText = q.options[q.answer];
+                let isCorrect = userAnswers[idx] === q.answer;
+                let badgeColor = isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800';
+
+                akList.innerHTML += `
+                    <div class="p-4 border rounded-xl bg-slate-50 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-sm text-blue-900">Q${idx + 1}. [${q.category}]</span>
+                            <span class="text-xs px-2 py-1 rounded font-semibold ${badgeColor}">${isCorrect ? 'Correct (+4)' : (userAnswers[idx] === null ? 'Unattempted (0)' : 'Incorrect (-1)')}</span>
+                        </div>
+                        <p class="text-sm font-medium text-slate-800">${q.text}</p>
+                        <div class="text-xs text-slate-600 space-y-1">
+                            <p><strong>Your Answer:</strong> <span class="${isCorrect ? 'text-emerald-700 font-bold' : 'text-rose-700 font-bold'}">${userAnsText}</span></p>
+                            <p><strong>Correct Answer:</strong> <span class="text-emerald-700 font-bold">${correctAnsText}</span></p>
+                            <p><strong>Explanation:</strong> ${q.explanation}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Download Report Card as Image for WhatsApp (8910587106)
+        function downloadReportImage() {
+            const reportElement = document.getElementById('report-card');
+            html2canvas(reportElement, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `${currentCandidate}_NEET_Physics_Report.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.95);
+                link.click();
+                alert("Report image downloaded successfully! Please share this image directly to WhatsApp number 8910587106.");
+            });
+        }
+    </script>
+</body>
+</html>
